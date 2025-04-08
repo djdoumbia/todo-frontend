@@ -1,0 +1,99 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": ["plugin:react/recommended", "airbnb", "plugin:react/jsx-runtime"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx", ".d.ts"]
+      }
+    }
+  },
+  "plugins": ["react", "@typescript-eslint"],
+  "rules": {
+    "semi": "error",
+    "@typescript-eslint/member-delimiter-style": [
+      "error",
+      {
+        "multiline": {
+          "delimiter": "comma",
+          "requireLast": true
+        },
+        "singleline": {
+          "delimiter": "comma",
+          "requireLast": true
+        }
+      }
+    ],
+    "jsx-a11y/label-has-associated-control": "off",
+    "comma-dangle": "error",
+    "func-names": "off",
+    "import/extensions": "off",
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
+    "react/jsx-filename-extension": [
+      2,
+      {
+        "extensions": [".jsx", ".tsx"]
+      }
+    ],
+    "react/prefer-stateless-function": "off",
+    "max-len": ["off"],
+    "react/jsx-no-useless-fragment": ["off"],
+    "react/destructuring-assignment": ["off"],
+    "react/require-default-props": "off",
+    "react/no-did-update-set-state": "off",
+    "react/button-has-type": "off",
+    "react/jsx-props-no-spreading": "off",
+    "import/prefer-default-export": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error"],
+    "no-plusplus": "off",
+    "no-continue": "off",
+    "no-param-reassign": "off",
+    "no-shadow": "off",
+    "object-curly-spacing": ["error", "always"],
+    "array-bracket-spacing": ["error", "always"],
+    "space-before-blocks": ["error", "always"],
+    "keyword-spacing": [2],
+    "space-in-parens": ["error", "never"],
+    "@typescript-eslint/no-shadow": ["error"],
+    "class-methods-use-this": "off",
+    "no-useless-constructor": "off",
+    "no-empty-function": "off",
+    "func-style": [
+      "warn",
+      "declaration",
+      {
+        "allowArrowFunctions": true
+      }
+    ],
+    "react/function-component-definition": [
+      "warn",
+      {
+        "namedComponents": "arrow-function",
+        "unnamedComponents": "arrow-function"
+      }
+    ],
+    "react/no-array-index-key": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/__tests__/*"],
+      "env": {
+        "jest": true
+      }
+    }
+  ],
+  "ignorePatterns": ["/packages/graphql/**/*.ts"]
+}
