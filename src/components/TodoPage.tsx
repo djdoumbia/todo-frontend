@@ -1,6 +1,3 @@
-/**
- * @todo YOU HAVE TO IMPLEMENT THE DELETE AND SAVE TASK ENDPOINT, A TASK CANNOT BE UPDATED IF THE TASK NAME DID NOT CHANGE, YOU'VE TO CONTROL THE BUTTON STATE ACCORDINGLY
- */
 import { Check, Delete } from '@mui/icons-material';
 import { Box, Button, Container, IconButton, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -14,16 +11,21 @@ const TodoPage = () => {
   const handleFetchTasks = async () => setTasks(await api.get('/tasks'));
 
   const handleDelete = async (id: number) => {
-    // @todo IMPLEMENT HERE : DELETE THE TASK & REFRESH ALL THE TASKS, DON'T FORGET TO ATTACH THE FUNCTION TO THE APPROPRIATE BUTTON
-  }
+    await api.delete(`/tasks/${id}`);  // Suppression d'une tâche via l'API
+    handleFetchTasks();  
+  };
 
   const handleSave = async () => {
-    // @todo IMPLEMENT HERE : SAVE THE TASK & REFRESH ALL THE TASKS, DON'T FORGET TO ATTACH THE FUNCTION TO THE APPROPRIATE BUTTON
-  }
+    if (!newTaskName.trim()) return;
+
+    const createdTask = await api.post('/tasks', { name: newTaskName });
+    setTasks((prev) => [...prev, createdTask]);
+    setNewTaskName(''); // Réinitialiser le champ de saisie
+  };
 
   useEffect(() => {
     (async () => {
-      handleFetchTasks();
+      handleFetchTasks();  
     })();
   }, []);
 
@@ -42,7 +44,7 @@ const TodoPage = () => {
                 <IconButton color="success" disabled>
                   <Check />
                 </IconButton>
-                <IconButton color="error" onClick={() => {}}>
+                <IconButton color="error" onClick={() => handleDelete(task.id)}>
                   <Delete />
                 </IconButton>
               </Box>
@@ -51,7 +53,7 @@ const TodoPage = () => {
         }
 
         <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
-          <Button variant="outlined" onClick={() => {}}>Ajouter une tâche</Button>
+          <Button variant="outlined" onClick={handleSave}>Ajouter une tâche</Button>
         </Box>
       </Box>
     </Container>
