@@ -8,7 +8,6 @@
   body {
     font-family: 'Poppins', sans-serif;
     background: #eef2f3;
-    color: #333;
     display: grid;
     place-items: center;
     height: 100vh;
@@ -50,7 +49,7 @@
     border: 2px solid #ddd;
     border-radius: 10px;
     box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: background 0.3s ease;
+    transition: 0.3s ease;
   }
   
   main:hover {
@@ -80,4 +79,9 @@
   a:hover {
     color: #005f87;
   }
+
+  .djeneba {
+    color: hsl(41, 100%, 45%)
+  }
+
   

@@ -1,3 +1,4 @@
+
 import { Check, Delete } from '@mui/icons-material';
 import { Box, Button, Container, IconButton, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -6,58 +7,95 @@ import { Task } from '../index';
 
 const TodoPage = () => {
   const api = useFetch();
+
   const [tasks, setTasks] = useState<Task[]>([]);
-
-  const handleFetchTasks = async () => setTasks(await api.get('/tasks'));
-
-  const handleDelete = async (id: number) => {
-    await api.delete(`/tasks/${id}`);  // Suppression d'une tâche via l'API
-    handleFetchTasks();  
-  };
-
-  const handleSave = async () => {
-    if (!newTaskName.trim()) return;
-
-    const createdTask = await api.post('/tasks', { name: newTaskName });
-    setTasks((prev) => [...prev, createdTask]);
-    setNewTaskName(''); // Réinitialiser le champ de saisie
-  };
+  const [newTaskName, setNewTaskName] = useState('');
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    (async () => {
-      handleFetchTasks();  
-    })();
-  }, []);
+    api.get('/tasks').then((data) => setTasks(data));
+  }, [api]);
+
+  const handleSaveTask = async () => {
+    if (!newTaskName.trim()) return;
+
+    if (editingTask) {
+      const updatedTask = await api.put(`/tasks/${editingTask.id}`, {
+        name: newTaskName,
+      });
+      setTasks((prev) =>
+        prev.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+      );
+    } else {
+      const createdTask = await api.post('/tasks', { name: newTaskName });
+      setTasks((prev) => [...prev, createdTask]);
+    }
+
+    setNewTaskName('');
+    setEditingTask(null);
+  };
+
+  const handleDeleteTask = async (id: number) => {
+    await api.delete(`/tasks/${id}`);
+    setTasks((prev) => prev.filter((task) => task.id !== id));
+  };
+
+  const startEditing = (task: Task) => {
+    setNewTaskName(task.name);
+    setEditingTask(task);
+  };
+
+  const isButtonDisabled =
+    !newTaskName.trim() ||
+    (editingTask ? newTaskName === editingTask.name : false);
+
+  const filteredTasks = tasks.filter((task) =>
+    task.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <Container>
-      <Box display="flex" justifyContent="center" mt={5}>
-        <Typography variant="h2">HDM Todo List</Typography>
+    <Container className='djeneba'>
+      <Typography variant="h4" gutterBottom>
+        Todo List
+      </Typography>
+      <Box display="flex" gap={2} mb={2}>
+        <TextField
+          fullWidth
+          label="Task Name"
+          value={newTaskName}
+          onChange={(e) => setNewTaskName(e.target.value)}
+        />
+        <Button 
+          variant="contained" color = "secondary"
+          onClick={handleSaveTask}
+          disabled={isButtonDisabled}
+        >
+          {editingTask ? 'Update' : 'Ajoute'} Task
+        </Button>
       </Box>
-
-      <Box justifyContent="center" mt={5} flexDirection="column">
-        {
-          tasks.map((task) => (
-            <Box display="flex" justifyContent="center" alignItems="center" mt={2} gap={1} width="100%">
-              <TextField size="small" value={task.name} fullWidth sx={{ maxWidth: 350 }} />
-              <Box>
-                <IconButton color="success" disabled>
-                  <Check />
-                </IconButton>
-                <IconButton color="error" onClick={() => handleDelete(task.id)}>
-                  <Delete />
-                </IconButton>
-              </Box>
-            </Box>
-          ))
-        }
-
-        <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
-          <Button variant="outlined" onClick={handleSave}>Ajouter une tâche</Button>
+      <Box mb={2} >
+        <TextField className='djeneba'
+          fullWidth
+          label="Search Tasks"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </Box>
+      {filteredTasks.map((task) => (
+        <Box key={task.id} display="flex" alignItems="center" mb={1}>
+          <Typography flex={1}>{task.name}</Typography>
+          <Typography flex={1}>{task.createdAt}</Typography>
+          <IconButton onClick={() => startEditing(task)}>
+            <Check />
+          </IconButton>
+          <IconButton onClick={() => handleDeleteTask(task.id)}>
+            <Delete />
+          </IconButton>
         </Box>
-      </Box>
+      ))}
     </Container>
   );
-}
+};
 
 export default TodoPage;
